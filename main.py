@@ -35,7 +35,12 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+try:
+    db_url = os.environ.get("DATABASE_URL")
+except KeyError:
+    db_url = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
