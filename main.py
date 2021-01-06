@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash, abort
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
-from datetime import date
+from datetime import date, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Table, Column, Integer, ForeignKey
@@ -34,11 +34,18 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.context_processor
+def inject_now():
+    return {'now': datetime.utcnow()}
+
 ##CONNECT TO DB
 try:
     db_url = os.environ.get("DATABASE_URL")
 except KeyError:
     db_url = 'sqlite:///blog.db'
+if db_url is None:
+    db_url = 'sqlite:///blog.db'
+
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
